@@ -1,0 +1,22 @@
+{
+    "type": "record",
+    "name": "TransactionEvent",
+    "namespace": "br.com.example.eventvisualizer.model",
+    "fields": [
+        {
+            "name": "transId",
+            "type": "string",
+            "doc": "Identificador único da transação"
+        },
+        {
+            "name": "payment",
+            "type": "PaymentEvent",
+            "doc": "Objeto com informações do pagamento"
+        },
+        {
+            "name": "created_at",
+            "type": "string",
+            "doc": "Data de criação da transação"
+        }
+    ]
+}

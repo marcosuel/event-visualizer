@@ -1,0 +1,17 @@
+{
+    "type": "record",
+    "name": "PaymentEvent",
+    "namespace": "br.com.example.eventvisualizer.model",
+    "fields": [
+        {
+            "name": "amount",
+            "type": "int",
+            "default": 0
+        },
+        {
+            "name": "currency",
+            "type": "string",
+            "default": "BRL"
+        }
+    ]
+}
