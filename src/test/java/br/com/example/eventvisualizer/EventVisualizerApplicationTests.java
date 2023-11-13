@@ -1,4 +1,4 @@
-package br.com.example.eventVisualizer;
+package br.com.example.eventvisualizer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
