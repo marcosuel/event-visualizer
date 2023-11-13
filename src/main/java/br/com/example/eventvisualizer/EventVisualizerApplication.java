@@ -1,4 +1,4 @@
-package br.com.example.eventVisualizer;
+package br.com.example.eventvisualizer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

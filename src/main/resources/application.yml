@@ -1,0 +1,7 @@
+server:
+  port: 8081
+
+kafka:
+  topics:
+    payment: payment-topic
+    transaction: transaction-topic
