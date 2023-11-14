@@ -31,6 +31,9 @@ dependencies {
 	implementation("org.springframework.kafka:spring-kafka")
 	implementation("io.confluent:kafka-avro-serializer:5.3.0")
 	implementation("org.apache.avro:avro:1.11.0")
+	// https://mvnrepository.com/artifact/io.confluent/kafka-json-schema-serializer
+	implementation("io.confluent:kafka-json-schema-serializer:7.5.1")
+	implementation("org.json:json:20231013")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -40,7 +43,3 @@ dependencies {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
-
-//tasks.bootBuildImage {
-//	builder.set("paketobuildpacks/builder-jammy-base:latest")
-//}
