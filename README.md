@@ -1,5 +1,5 @@
 # Descrição
-Configuração para enviar/receber tópicos kafka de forma genérica, sem precisa configurar individualmente cada tópico.
+Esta aplicação tem por objetivo prover uma forma de listar eventos do kafka de forma que possamos prover os tópicos de forma dinâmica, sem a necessidade de codar cada listener.
 
 ## Como utilizar
 
