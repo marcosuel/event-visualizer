@@ -11,4 +11,4 @@ Esta aplicação tem por objetivo prover uma forma de listar eventos do kafka de
 ## Algumas tecnologias
 
 * Spring Kafka - https://spring.io/projects/spring-kafka
-* Kafka Avro Serializer - https://mvnrepository.com/artifact/io.confluent/kafka-avro-serializer/5.5.0
+* WebSockets - https://docs.spring.io/spring-framework/reference/web/websocket.html
