@@ -3,10 +3,13 @@ Esta aplicação tem por objetivo prover uma forma de listar eventos do kafka de
 
 ## Como utilizar
 
+### Back-end
 * Adicionar a seguinte opção na "vm options": -Dspring.profiles.active=local
-
 * Rodar o comando: docker-compose up
 
+### Front-end
+Com o backend rodando, abra o arquivo [index.html](front-end%2Findex.html) no seu navegador de preferencia.
+A página conectará com o websocket automaticamente ao ser carregada.
 
 ## Algumas tecnologias
 
