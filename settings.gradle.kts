@@ -6,4 +6,4 @@ pluginManagement {
 		mavenCentral()
 	}
 }
-rootProject.name = "eventVisualizer"
+rootProject.name = "event-visualizer"
