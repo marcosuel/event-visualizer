@@ -12,3 +12,8 @@ Esta aplicação tem por objetivo prover uma forma de listar eventos do kafka de
 
 * Spring Kafka - https://spring.io/projects/spring-kafka
 * WebSockets - https://docs.spring.io/spring-framework/reference/web/websocket.html
+
+## Todo
+
+* Adicionar título para os eventos listados com data e hora e algum identificador (back e front)
+* Possibilitar autenticação do kafka com TLS
