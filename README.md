@@ -15,6 +15,7 @@ A página conectará com o websocket automaticamente ao ser carregada.
 
 * Spring Kafka - https://spring.io/projects/spring-kafka
 * WebSockets - https://docs.spring.io/spring-framework/reference/web/websocket.html
+* Docker - https://docs.docker.com/
 
 ## Todo
 
