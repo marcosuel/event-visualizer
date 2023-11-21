@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Event Visualizer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: grid;
+            place-items: center;
+            background-color: #f4f4f4;
+        }
+
+        .scrollable-container {
+            height: 500px;
+            overflow: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .accordion {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .accordion li {
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            background-color: #f9f9f9;
+        }
+        .accordion li .title {
+            cursor: pointer;
+            padding: 12px 16px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+            border-radius: 4px 4px 0 0;
+            color: #444;
+            font-weight: bold;
+        }
+
+        .accordion li .title:hover {
+            color: black;
+        }
+        
+        .accordion li .content {
+            display: none;
+            padding: 12px 16px;
+            border-top: 1px solid #e0e0e0;
+            border-radius: 0 0 4px 4px;
+        }
+        .accordion li .content p {
+            margin: 0;
+            color: #666;
+        }
+
+        .search-input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .add-listener-form {
+            height: fit-content;
+            text-align: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+    <div class="container col-lg-10">
+        <br>
+        <div class="add-listener-form">
+            <h2>Event Visualizer</h2>
+            <button class="btn btn-link secondary hideable invisible" type="button" data-toggle="collapse" data-target="#collapsableForm" onclick="invertVisibility('.hideable')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z"/>
+                </svg>
+            </button>
+            <div class="collapse show" id="collapsableForm">
+                <div class="form-check float-left mb-2 ml-1" onchange="invertConfigFieldsVisibility()">
+                    <input class="form-check-input" type="checkbox" value="" id="configCheck" data-toggle="collapse" data-target="#configFields" onclick="invertVisibility('.hidden-form')">
+                    <label class="form-check-label" for="configCheck">
+                      Update Kafka Configuration
+                    </label>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Topic Name</span>
+                    </div>
+                    <input type="text" class="form-control" id="topicName" name="topicName">
+                </div>
+
+                <div class="hidden hidden-form" id="configFields">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                        <span class="input-group-text">Group Id</span>
+                        </div>
+                        <input type="text" class="form-control" id="groupId" name="groupId">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                        <span class="input-group-text">Bootstrap Servers</span>
+                        </div>
+                        <input type="text" class="form-control" id="bootstrapServers" name="bootstrapServers" placeholder="localhost:9092,localhost:9093">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                        <span class="input-group-text">Schema Registry Url</span>
+                        </div>
+                        <input type="text" class="form-control" id="schemaRegistry" name="schemaRegistry">
+                    </div>
+                </div>
+                <button class="btn btn-success" type="button" onclick="listenEvents()">Listen</button>
+                <br>
+                <button class="btn btn-link hideable visible" type="button" data-toggle="collapse" data-target="#collapsableForm" onclick="invertVisibility('.hideable')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <br>
+        <div class="scrollable-container">
+            <input type="text" class="search-input form-control mt-3" placeholder="Search..." onkeyup="filterList()">
+            <ul class="accordion list-group" id="accordionList">
+                <li>
+                    <div class="title">Example 1</div>
+                    <div class="content">
+                        <p>Additional details or content for Item 1</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="title">Example 2</div>
+                    <div class="content">
+                        <p>Additional details or content for Item 2</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        $(document).ready(() => connectWebSocket());
+
+        var accordionItems = document.querySelectorAll('.accordion li');
+        accordionItems.forEach(function(item) {
+            item.querySelector('.title').addEventListener('click', toggleContent);
+        });
+
+
+        function toggleContent() {
+            hideElement(this.nextElementSibling);
+        }
+
+        function invertConfigFieldsVisibility() {
+            hideElement(document.getElementById('configFields'))
+        }
+
+        function hideElement(element) {
+            if (element.style.display === 'block') {
+                element.style.display = 'none';
+            } else {
+                element.style.display = 'block';
+            }
+        }
+
+        function invertVisibility(className) {
+            document.querySelectorAll(className).forEach( item => {
+                let classList = item.classList;
+                if(classList.contains("visible")) {
+                    classList.remove("visible");
+                    classList.add("invisible");
+                } else if(classList.contains("invisible")) {
+                    classList.remove("invisible");
+                    classList.add("visible");
+                }
+            });
+        }
+
+
+        function filterList() {
+            var input, filter, ul, li, title, content, i, txtValue;
+            input = document.querySelector('.search-input');
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("accordionList");
+            li = ul.getElementsByTagName('li');
+
+            for (i = 0; i < li.length; i++) {
+                title = li[i].getElementsByClassName("title")[0];
+                content = li[i].getElementsByClassName("content")[0];
+                txtValue = title.textContent || title.innerText;
+                txtContent = content.textContent || content.innerText;
+
+                if (txtValue.toUpperCase().indexOf(filter) > -1 || txtContent.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+
+
+        function addNewItem(title, content) {
+            var newTitle = title;
+            var newContent = content;
+
+            var newItem = document.createElement('li');
+            newItem.innerHTML = `
+                <div class="title">${newTitle}</div>
+                <div class="content">
+                    <pre><code>${newContent}</code></pre>
+                </div>
+            `;
+
+            newItem.querySelector(".title").addEventListener('click', toggleContent);
+            document.getElementById('accordionList').appendChild(newItem);
+        }
+
+
+        function listenEvents() {
+            document.getElementById('accordionList').innerHTML = "";
+            createListener();
+        }
+
+        
+        function connectWebSocket() {
+            let socket = new SockJS('http://localhost:8082/connect');
+            let stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+
+                stompClient.subscribe('/topic/update', function (message) {
+                    var content = JSON.parse(message.body);
+                    console.log('Received update!' + message);
+                    addNewItem("event", JSON.stringify(content, null, 2))
+                });
+            });
+        }
+
+
+        function createListener() {
+            let topicName = document.getElementById('topicName').value;
+            let groupId = document.getElementById('groupId').value;
+            let bootstrapServers = document.getElementById('bootstrapServers').value;
+            let schemaRegistry = document.getElementById('schemaRegistry').value;
+            let updateConfigs = document.getElementById('configCheck').checked;
+
+            fetch(`http://localhost:8082/listener?topic=${topicName}&groupId=${groupId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: `{
+                    "topic": "${topicName}",
+                    "groupId": "${groupId}",
+                    "bootstrapServers": "${bootstrapServers}",
+                    "schemaRegistry": "${schemaRegistry}",
+                    "updateConfigs": "${updateConfigs}"
+                }`
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .then(() => {
+                console.log('POST request succeeded!');
+            })
+            .catch(error => {
+                console.error('There was a problem with the POST request:', error);
+            });
+        }
+
+    </script>
+</body>
+</html>
