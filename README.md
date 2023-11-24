@@ -19,5 +19,5 @@ A página conectará com o websocket automaticamente ao ser carregada.
 
 ## Todo
 
-* Adicionar título para os eventos listados com data e hora e algum identificador (back e front)
+* ~~Adicionar título para os eventos listados com data e hora e algum identificador (back e front)~~
 * Possibilitar autenticação do kafka com TLS
