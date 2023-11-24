@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Event Visualizer</title>
     <style>
@@ -33,6 +33,7 @@
             background-color: #f9f9f9;
         }
         .accordion li .title {
+            height: 50px;
             cursor: pointer;
             padding: 12px 16px;
             background-color: #f5f5f5;
@@ -45,7 +46,7 @@
         .accordion li .title:hover {
             color: black;
         }
-        
+
         .accordion li .content {
             display: none;
             padding: 12px 16px;
@@ -86,212 +87,222 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
 <body>
-    <div class="container col-lg-10">
-        <br>
-        <div class="add-listener-form">
-            <h2>Event Visualizer</h2>
-            <button class="btn btn-link secondary hideable invisible" type="button" data-toggle="collapse" data-target="#collapsableForm" onclick="invertVisibility('.hideable')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z"/>
-                </svg>
-            </button>
-            <div class="collapse show" id="collapsableForm">
-                <div class="form-check float-left mb-2 ml-1" onchange="invertConfigFieldsVisibility()">
-                    <input class="form-check-input" type="checkbox" value="" id="configCheck" data-toggle="collapse" data-target="#configFields" onclick="invertVisibility('.hidden-form')">
-                    <label class="form-check-label" for="configCheck">
-                      Update Kafka Configuration
-                    </label>
-                </div>
+<div class="container col-lg-10">
+    <br>
+    <div class="add-listener-form">
+        <h2>Event Visualizer</h2>
+        <button class="btn btn-link secondary hideable invisible" type="button" data-toggle="collapse" data-target="#collapsableForm" onclick="invertVisibility('.hideable')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z"/>
+            </svg>
+        </button>
+        <div class="collapse show" id="collapsableForm">
+            <div class="form-check float-left mb-2 ml-1" onchange="invertConfigFieldsVisibility()">
+                <input class="form-check-input" type="checkbox" value="" id="configCheck" data-toggle="collapse" data-target="#configFields" onclick="invertVisibility('.hidden-form')">
+                <label class="form-check-label" for="configCheck">
+                    Update Kafka Configuration
+                </label>
+            </div>
 
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Topic Name</span>
+                </div>
+                <input type="text" class="form-control" id="topicName" name="topicName">
+            </div>
+
+            <div class="hidden hidden-form" id="configFields">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                      <span class="input-group-text">Topic Name</span>
-                    </div>
-                    <input type="text" class="form-control" id="topicName" name="topicName">
-                </div>
-
-                <div class="hidden hidden-form" id="configFields">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
                         <span class="input-group-text">Group Id</span>
-                        </div>
-                        <input type="text" class="form-control" id="groupId" name="groupId">
                     </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                        <span class="input-group-text">Bootstrap Servers</span>
-                        </div>
-                        <input type="text" class="form-control" id="bootstrapServers" name="bootstrapServers" placeholder="localhost:9092,localhost:9093">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                        <span class="input-group-text">Schema Registry Url</span>
-                        </div>
-                        <input type="text" class="form-control" id="schemaRegistry" name="schemaRegistry">
-                    </div>
+                    <input type="text" class="form-control" id="groupId" name="groupId">
                 </div>
-                <button class="btn btn-success" type="button" onclick="listenEvents()">Listen</button>
-                <br>
-                <button class="btn btn-link hideable visible" type="button" data-toggle="collapse" data-target="#collapsableForm" onclick="invertVisibility('.hideable')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z"/>
-                    </svg>
-                </button>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Bootstrap Servers</span>
+                    </div>
+                    <input type="text" class="form-control" id="bootstrapServers" name="bootstrapServers" placeholder="localhost:9092,localhost:9093">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Schema Registry Url</span>
+                    </div>
+                    <input type="text" class="form-control" id="schemaRegistry" name="schemaRegistry">
+                </div>
             </div>
-        </div>
-        <br>
-        <div class="scrollable-container">
-            <input type="text" class="search-input form-control mt-3" placeholder="Search..." onkeyup="filterList()">
-            <ul class="accordion list-group" id="accordionList">
-                <li>
-                    <div class="title">Example 1</div>
-                    <div class="content">
-                        <p>Additional details or content for Item 1</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="title">Example 2</div>
-                    <div class="content">
-                        <p>Additional details or content for Item 2</p>
-                    </div>
-                </li>
-            </ul>
+            <button class="btn btn-success" type="button" onclick="listenEvents()">Listen</button>
+            <br>
+            <button class="btn btn-link hideable visible" type="button" data-toggle="collapse" data-target="#collapsableForm" onclick="invertVisibility('.hideable')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+            </button>
         </div>
     </div>
-    
-    <script>
-        $(document).ready(() => connectWebSocket());
-
-        var accordionItems = document.querySelectorAll('.accordion li');
-        accordionItems.forEach(function(item) {
-            item.querySelector('.title').addEventListener('click', toggleContent);
-        });
-
-
-        function toggleContent() {
-            hideElement(this.nextElementSibling);
-        }
-
-        function invertConfigFieldsVisibility() {
-            hideElement(document.getElementById('configFields'))
-        }
-
-        function hideElement(element) {
-            if (element.style.display === 'block') {
-                element.style.display = 'none';
-            } else {
-                element.style.display = 'block';
-            }
-        }
-
-        function invertVisibility(className) {
-            document.querySelectorAll(className).forEach( item => {
-                let classList = item.classList;
-                if(classList.contains("visible")) {
-                    classList.remove("visible");
-                    classList.add("invisible");
-                } else if(classList.contains("invisible")) {
-                    classList.remove("invisible");
-                    classList.add("visible");
-                }
-            });
-        }
-
-
-        function filterList() {
-            var input, filter, ul, li, title, content, i, txtValue;
-            input = document.querySelector('.search-input');
-            filter = input.value.toUpperCase();
-            ul = document.getElementById("accordionList");
-            li = ul.getElementsByTagName('li');
-
-            for (i = 0; i < li.length; i++) {
-                title = li[i].getElementsByClassName("title")[0];
-                content = li[i].getElementsByClassName("content")[0];
-                txtValue = title.textContent || title.innerText;
-                txtContent = content.textContent || content.innerText;
-
-                if (txtValue.toUpperCase().indexOf(filter) > -1 || txtContent.toUpperCase().indexOf(filter) > -1) {
-                    li[i].style.display = "";
-                } else {
-                    li[i].style.display = "none";
-                }
-            }
-        }
-
-
-        function addNewItem(title, content) {
-            var newTitle = title;
-            var newContent = content;
-
-            var newItem = document.createElement('li');
-            newItem.innerHTML = `
-                <div class="title">${newTitle}</div>
-                <div class="content">
-                    <pre><code>${newContent}</code></pre>
+    <br>
+    <div class="scrollable-container">
+        <input type="text" class="search-input form-control mt-3" placeholder="Search..." onkeyup="filterList()">
+        <ul class="accordion list-group" id="accordionList">
+            <li>
+                <div class="title">
+                    <div class="float-left ">Topic: <i>example</i></div>
+                    <div class="float-right ">Date: <i>29-06-2023 16:35:01</i></div>
                 </div>
-            `;
+                <div class="content">
+                    <p>Additional details or content for Item 1</p>
+                </div>
+            </li>
+            <li>
+                <div class="title">
+                    <div class="float-left ">Topic: <i>example</i></div>
+                    <div class="float-right ">Date: <i>29-06-2023 16:40:51</i></div>
+                </div>
+                <div class="content">
+                    <p>Additional details or content for Item 2</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
 
-            newItem.querySelector(".title").addEventListener('click', toggleContent);
-            document.getElementById('accordionList').appendChild(newItem);
+<script>
+    $(document).ready(() => connectWebSocket());
+
+    var accordionItems = document.querySelectorAll('.accordion li');
+    accordionItems.forEach(function(item) {
+        item.querySelector('.title').addEventListener('click', toggleContent);
+    });
+
+
+    function toggleContent() {
+        hideElement(this.nextElementSibling);
+    }
+
+    function invertConfigFieldsVisibility() {
+        hideElement(document.getElementById('configFields'))
+    }
+
+    function hideElement(element) {
+        if (element.style.display === 'block') {
+            element.style.display = 'none';
+        } else {
+            element.style.display = 'block';
         }
+    }
+
+    function invertVisibility(className) {
+        document.querySelectorAll(className).forEach( item => {
+            let classList = item.classList;
+            if(classList.contains("visible")) {
+                classList.remove("visible");
+                classList.add("invisible");
+            } else if(classList.contains("invisible")) {
+                classList.remove("invisible");
+                classList.add("visible");
+            }
+        });
+    }
 
 
-        function listenEvents() {
-            document.getElementById('accordionList').innerHTML = "";
-            createListener();
+    function filterList() {
+        var input, filter, ul, li, title, content, i, txtValue;
+        input = document.querySelector('.search-input');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("accordionList");
+        li = ul.getElementsByTagName('li');
+
+        for (i = 0; i < li.length; i++) {
+            title = li[i].getElementsByClassName("title")[0];
+            content = li[i].getElementsByClassName("content")[0];
+            txtValue = title.textContent || title.innerText;
+            txtContent = content.textContent || content.innerText;
+
+            if (txtValue.toUpperCase().indexOf(filter) > -1 || txtContent.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
         }
+    }
 
-        
-        function connectWebSocket() {
-            let socket = new SockJS('http://localhost:8082/connect');
-            let stompClient = Stomp.over(socket);
 
-            stompClient.connect({}, function (frame) {
-                console.log('Connected: ' + frame);
+    function addNewItem(topic, date, content) {
 
-                stompClient.subscribe('/topic/update', function (message) {
-                    var content = JSON.parse(message.body);
-                    console.log('Received update!' + message);
-                    addNewItem("event", JSON.stringify(content, null, 2))
-                });
+        var newItem = document.createElement('li');
+        newItem.innerHTML = `
+            <div class="title">
+                <div class="float-left ">Topic: <i>${topic}</i></div>
+                <div class="float-right ">Date: <i>${date}</i></div>
+            </div>
+            <div class="content">
+                <p>${content}</p>
+            </div>
+        `;
+
+        newItem.querySelector(".title").addEventListener('click', toggleContent);
+        document.getElementById('accordionList').appendChild(newItem);
+    }
+
+
+    function listenEvents() {
+        document.getElementById('accordionList').innerHTML = "";
+        createListener();
+    }
+
+
+    function connectWebSocket() {
+        let socket = new SockJS('http://localhost:8082/connect');
+        let stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+
+            stompClient.subscribe('/topic/update', function (message) {
+                let content = JSON.parse(message.body);
+                let topic = content.topic;
+                let date = content.date;
+                delete content.date;
+                delete content.topic;
+                addNewItem(topic, date, JSON.stringify(content, null, 2))
             });
-        }
+        });
+    }
 
 
-        function createListener() {
-            let topicName = document.getElementById('topicName').value;
-            let groupId = document.getElementById('groupId').value;
-            let bootstrapServers = document.getElementById('bootstrapServers').value;
-            let schemaRegistry = document.getElementById('schemaRegistry').value;
-            let updateConfigs = document.getElementById('configCheck').checked;
+    function createListener() {
+        let topicName = document.getElementById('topicName').value;
+        let groupId = document.getElementById('groupId').value;
+        let bootstrapServers = document.getElementById('bootstrapServers').value;
+        let schemaRegistry = document.getElementById('schemaRegistry').value;
+        let updateConfigs = document.getElementById('configCheck').checked;
 
-            fetch(`http://localhost:8082/listener?topic=${topicName}&groupId=${groupId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: `{
-                    "topic": "${topicName}",
-                    "groupId": "${groupId}",
-                    "bootstrapServers": "${bootstrapServers}",
-                    "schemaRegistry": "${schemaRegistry}",
-                    "updateConfigs": "${updateConfigs}"
-                }`
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-            })
-            .then(() => {
-                console.log('POST request succeeded!');
-            })
-            .catch(error => {
-                console.error('There was a problem with the POST request:', error);
-            });
-        }
+        fetch(`http://localhost:8082/listener?topic=${topicName}&groupId=${groupId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `{
+                "topic": "${topicName}",
+                "groupId": "${groupId}",
+                "bootstrapServers": "${bootstrapServers}",
+                "schemaRegistry": "${schemaRegistry}",
+                "updateConfigs": "${updateConfigs}"
+            }`
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+        })
+        .then(() => {
+            console.log('POST request succeeded!');
+        })
+        .catch(error => {
+            console.error('There was a problem with the POST request:', error);
+        });
+    }
 
-    </script>
+</script>
 </body>
 </html>
