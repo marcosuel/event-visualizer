@@ -1,5 +1,5 @@
 # Descrição
-Esta aplicação tem por objetivo prover uma forma de listar eventos do kafka de forma que possamos prover os tópicos de forma dinâmica, sem a necessidade de codar cada listener.
+Esta aplicação tem por objetivo prover uma forma de listar eventos do kafka de forma que possamos prover os tópicos de forma dinâmica, sem a necessidade de codificar cada listener individualmente.
 
 ## Como utilizar
 
