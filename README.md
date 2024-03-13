@@ -32,6 +32,10 @@ With the backend running, open the [index.html](front-end%2Findex.html) file in 
 
 ## Algumas tecnologias / Some technologies
 
+* Spring Kafka - https://spring.io/projects/spring-kafka
+* WebSockets - https://docs.spring.io/spring-framework/reference/web/websocket.html
+* Docker - https://docs.docker.com/
+
 ## To do list
 Pt-br
 * ~~Adicionar título para os eventos listados com data e hora e algum identificador (back e front)~~
